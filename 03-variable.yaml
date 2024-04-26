@@ -1,6 +1,10 @@
 - name: printing 
   hosts: mongodb
+  vars:
+    NAME: Laksh
+    PERSON: AYUSH
+    SAY: good and you..?
   tasks:
   - name: print Hello
     ansible.builtin.debug:
-      msg: "hello, How are you.?"
+      msg: "hello{{NAME}}, How are you. {{PERSON}} {{SAY}}?"
