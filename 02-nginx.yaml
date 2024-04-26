@@ -1,5 +1,6 @@
 - name: Installing Nginx and Starting Service
   hosts: mongodb
+  become: yes #this will provide ansible root access.
   tasks:
   - name: install Nginx
     ansible.builtin.yum:
