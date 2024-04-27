@@ -4,3 +4,37 @@
   tasks:
     - name: providing Script
       ansible.builtin.shell: curl -sL https://rpm.nodesource.com/setup_lts.x | bash
+    - name: Install nodejs
+      ansible.builtin.yum:
+        name: nodejs
+        state: installed
+    - name: new user
+      ansible.builtin.command: id roboshop
+      register: output1
+      ingore_errors: true
+    - name: print command out put
+      ansible.builtin.debug:
+        msg: "output is: {{output1}}"
+    - name: print exit status
+      ansible.builtin.debug:
+        msg: "{{output1.rc}}"
+    - when: output1.rc != 0
+      name: create user roboshop
+        ansible.builtin.user:
+          name: roboshop
+          state: present
+    - name: checking dir
+      ansible.builtin.stat:
+        path: /app
+      register: directory_info
+    - name: creating dir if not exist
+       when: not directory_info.stat.exists
+       ansible.builtin.file:
+        path: /app
+        state: directory
+        mode: '0755'
+    - name: Perform tasks when directory exists
+        ansible.builtin.debug:
+          msg: "Directory exists, proceed with tasks"
+        when: directory_info.stat.exists
+
