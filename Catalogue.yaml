@@ -13,7 +13,7 @@
     - name: checking
       ansible.builtin.command: id roboshop
       register: output1
-      ingnore_errors: true
+      ignore_errors: true
 
     - name: print command out
       ansible.builtin.debug:
