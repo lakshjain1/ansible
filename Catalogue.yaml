@@ -39,7 +39,7 @@
         state: directory
         mode: '0755'
     - name: Perform tasks when directory exists
-        ansible.builtin.debug:
-          msg: "Directory exists, proceed with tasks"
+      ansible.builtin.debug:
+        msg: "Directory exists, proceed with tasks"
         when: directory_info.stat.exists
 
