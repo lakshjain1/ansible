@@ -32,10 +32,10 @@
     - name: checking dir
       ansible.builtin.stat:
         path: /app
-      register: directory_info
+      register: dir_info
     
     - name: creating dir if not exist
-      when: not directory_info.stat.exists
+      when: not dir_info.stat.exists
       ansible.builtin.file:
         path: /app
         state: directory
@@ -44,5 +44,6 @@
     - name: Perform tasks when directory exists
       ansible.builtin.debug:
         msg: "Directory exists, proceed with tasks"
-      when: directory_info.stat.exists
+      when: dir_info.stat.exists
 
+    - name: Downloading application 
