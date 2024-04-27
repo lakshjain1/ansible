@@ -28,18 +28,21 @@
       ansible.builtin.user:
         name: roboshop
         state: present
+    
     - name: checking dir
       ansible.builtin.stat:
         path: /app
       register: directory_info
+    
     - name: creating dir if not exist
       when: not directory_info.stat.exists
       ansible.builtin.file:
         path: /app
         state: directory
         mode: '0755'
+
     - name: Perform tasks when directory exists
       ansible.builtin.debug:
         msg: "Directory exists, proceed with tasks"
-        when: directory_info.stat.exists
+      when: directory_info.stat.exists
 
