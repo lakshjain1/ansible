@@ -10,12 +10,12 @@
         name: nodejs
         state: installed
 
-    - name: new roboshop
+    - name: checking
       ansible.builtin.command: id roboshop
       register: output1
       ingore_errors: true
 
-    - name: print command out put
+    - name: print command out
       ansible.builtin.debug:
         msg: "output is: {{output1}}"
 
