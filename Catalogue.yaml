@@ -10,7 +10,7 @@
         name: nodejs
         state: installed
 
-    - name: new user
+    - name: new roboshop
       ansible.builtin.command: id roboshop
       register: output1
       ingore_errors: true
