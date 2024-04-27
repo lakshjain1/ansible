@@ -1,0 +1,6 @@
+- name: Install catalogue
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: providing Script
+      ansible.builtin.shell: curl -sL https://rpm.nodesource.com/setup_lts.x | bash
