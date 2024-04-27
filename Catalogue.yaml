@@ -46,4 +46,7 @@
         msg: "Directory exists, proceed with tasks"
       when: dir_info.stat.exists
 
-    - name: Downloading application 
+    - name: Downloading application
+      ansible.builtin.command: curl -o /tmp/catalogue.zip https://roboshop-builds.s3.amazonaws.com/catalogue.zip
+    
+    
