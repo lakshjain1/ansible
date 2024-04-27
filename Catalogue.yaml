@@ -25,9 +25,9 @@
 
     - when: output1.rc != 0
       name: create user roboshop
-        ansible.builtin.user:
-          name: roboshop
-          state: present
+      ansible.builtin.user:
+        name: roboshop
+        state: present
     - name: checking dir
       ansible.builtin.stat:
         path: /app
