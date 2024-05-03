@@ -59,10 +59,10 @@
     
     - name: installing dependencies
       ansible.builtin.command: npm install
-        args:
-          chdir: /app
+      args:
+        chdir: /app
     
-    - name: copying user.service
+    - name: copying cart.service
       ansible.builtin.copy:
         src: cart.service
     
@@ -72,6 +72,6 @@
 
     - name: restart catalogue
       ansible.builtin.service:
-        name: user
+        name: cart
         state: restarted
         enabled: true
