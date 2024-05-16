@@ -1,14 +1,15 @@
-- name: Install user
+- name: Configure Payment
   hosts: localhost
   become: yes
   tasks:
-    - name: providing Script
-      ansible.builtin.shell: curl -sL https://rpm.nodesource.com/setup_lts.x | bash
-
-    - name: Install nodejs
+    - name: Installing python
       ansible.builtin.yum:
-        name: nodejs
+        name: "{{item}}"
         state: installed
+      loops:
+      - python36
+      - gcc
+      - python3-devel
 
     - name: checking
       ansible.builtin.command: id roboshop
@@ -28,7 +29,7 @@
       ansible.builtin.user:
         name: roboshop
         state: present
-    
+
     - name: checking dir
       ansible.builtin.stat:
         path: /app
@@ -48,47 +49,31 @@
 
     - name: Downloading application
       ansible.builtin.get_url:
-        url: https://roboshop-builds.s3.amazonaws.com/user.zip
-        dest: /tmp/user.zip
+        url: https://roboshop-builds.s3.amazonaws.com/payment.zip
+        dest: /tmp/payment.zip
     
-    - name: unziping user
+    - name: unziping payment
       ansible.builtin.unarchive:
-        src: /tmp/user.zip
+        src: /tmp/payment.zip
         dest: /app
         remote_src: yes
-    
-    - name: install dependencies
-      ansible.builtin.command: npm install
+
+    - name: installing dependencies
+      ansible.builtin.command: pip3.6 install -r requirements.txt
       args:
         chdir: /app
-    
-    - name: copying user.service
+
+    - name: copying payment.service
       ansible.builtin.copy:
-        src: user.service
-        dest: /etc/systemd/system/user.service
+        src: payment.service
+        path: /etc/systemd/system/payment.service
     
     - name: Reload systemd daemon and restart a service
       ansible.builtin.systemd:
         daemon_reload: yes
-    
-    - name: copy mongo repo to yum.repos.d
-      ansible.builtin.copy:
-        src: mongodb.repo
-        dest: /etc/yum.repos.d/mongo.repo
 
-    - name: Install MongoDB
-      ansible.builtin.yum:
-        name: mongodb-org-shell
-        state: installed
-
-    - name: load catalogue data
-      ansible.builtin.command: mongo --host mongodb.laksh.site < /app/schema/user.js
-
-    - name: restart catalogue
+    - name: restart payment
       ansible.builtin.service:
-        name: user
+        name: payment
         state: restarted
         enabled: true
-
-    
-    

@@ -1,13 +1,10 @@
-- name: Install user
+- name: Installing Shipping components
   hosts: localhost
   become: yes
   tasks:
-    - name: providing Script
-      ansible.builtin.shell: curl -sL https://rpm.nodesource.com/setup_lts.x | bash
-
-    - name: Install nodejs
+    - name: Install maven
       ansible.builtin.yum:
-        name: nodejs
+        name: maven
         state: installed
 
     - name: checking
@@ -28,7 +25,7 @@
       ansible.builtin.user:
         name: roboshop
         state: present
-    
+        
     - name: checking dir
       ansible.builtin.stat:
         path: /app
@@ -45,50 +42,47 @@
       ansible.builtin.debug:
         msg: "Directory exists, proceed with tasks"
       when: dir_info.stat.exists
-
+      
     - name: Downloading application
       ansible.builtin.get_url:
-        url: https://roboshop-builds.s3.amazonaws.com/user.zip
-        dest: /tmp/user.zip
+        url: https://roboshop-builds.s3.amazonaws.com/shipping.zip
+        dest: /tmp/shipping.zip
     
-    - name: unziping user
+    - name: unziping Shipping
       ansible.builtin.unarchive:
-        src: /tmp/user.zip
+        src: /tmp/shipping.zip
         dest: /app
         remote_src: yes
     
-    - name: install dependencies
-      ansible.builtin.command: npm install
+    - name: installing dependencies
+      ansible.builtin.command: mvn clean package
       args:
         chdir: /app
     
-    - name: copying user.service
+    - name: Move file
+      ansible.builtin.command: mv target/shipping-1.0.jar shipping.jar
+      args:
+        chdir: /app
+
+    - name: copying catalogue.service
       ansible.builtin.copy:
-        src: user.service
-        dest: /etc/systemd/system/user.service
-    
+        src: shipping.service
+        path: /etc/systemd/system/shipping.service
+
     - name: Reload systemd daemon and restart a service
       ansible.builtin.systemd:
         daemon_reload: yes
     
-    - name: copy mongo repo to yum.repos.d
-      ansible.builtin.copy:
-        src: mongodb.repo
-        dest: /etc/yum.repos.d/mongo.repo
-
-    - name: Install MongoDB
+    - name: Install MySql
       ansible.builtin.yum:
-        name: mongodb-org-shell
+        name: mysql
         state: installed
 
-    - name: load catalogue data
-      ansible.builtin.command: mongo --host mongodb.laksh.site < /app/schema/user.js
+    - name: load mysql schema
+      ansible.builtin.shell: mysql -h mysql.laksh.site -uroot -pRoboShop@1 < /app/schema/shipping.sql
 
-    - name: restart catalogue
+    - name: restart shipping
       ansible.builtin.service:
-        name: user
+        name: shipping
         state: restarted
         enabled: true
-
-    
-    

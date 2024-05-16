@@ -1,0 +1,25 @@
+- name: Configure My SQL
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: disable SQL version
+      ansible.builtin.command: yum module disable mysql -y 
+
+    - name: Copy SQL repo
+      ansible.builtin.copy:
+        src: mysql.repo
+        path: /etc/yum.repos.d/mysql.repo
+
+    - name: Install mysql
+      ansible.builtin.yum:
+        name: mysql-community-server
+        state: installed
+
+    - name: Starting service MY sql
+      ansible.builtin.service:
+        name: mysqld
+        state: started
+        enabled: true
+
+    - name: Setting password
+      ansible.builtin.command: mysql_secure_installation --set-root-pass RoboShop@1
